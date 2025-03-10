@@ -1,4 +1,4 @@
-# Diablo Clone Tracker
+# D2Tracker
 
 A Python-based tracker for Diablo Clone (DClone) progress and Terror Zones in Diablo 2: Resurrected. This application connects to d2emu.com's websocket API to monitor DClone status and Terror Zone rotations, sending notifications to Discord when changes occur.
 
