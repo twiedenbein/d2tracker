@@ -96,6 +96,7 @@ def dclone_handler(data):
     for k, v in data['dclone'].items():
         for val in ["krLadderHardcore", "usLadderHardcore", "euLadderHardcore"]:
             if k == val:
+                del v['updated_at']
                 hc_ladder_data[k] = v
     current = hc_ladder_data
     logger.debug("dclone handler - last: %s, current: %s", last_dclone, current)
@@ -121,7 +122,7 @@ def build_and_send_message(last_dclone, current):
     for k,v in current.items():
         if not last_dclone or last_dclone.get(k) != v:
             logger.info("Change detected in %s", {keymap[k]})
-            content = f"**{keymap[k]}** Step {v['status']+1}/6: {valmap[v['status']]} -- Last updated <t:{v['updated_at']}>"
+            content = f"**{keymap[k]}** Step {v['status']+1}/6: {valmap[v['status']]}>"
             if v['status'] != 0:
                 content = f"{os.getenv('DCLONE_NOTIFY')} {content}"
             message_discord(os.getenv('DCLONE_WEBHOOK'), content)
