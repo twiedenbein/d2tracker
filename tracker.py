@@ -148,15 +148,17 @@ def message_discord(webhook_url, content):
         logger.error("Error sending message to Discord: %s", e)
 
 if __name__ == "__main__":
-    try:
-        ws = websocket.WebSocketApp("wss://d2emu.com/ws",
-                                  on_message=on_message,
-                                  on_error=on_error,
-                                  on_close=on_close,
-                                  on_open=on_open,
-                                  header={"Authorization":"Basic {}".format(os.getenv('D2EMU_AUTH'))})
-        ws.run_forever(dispatcher=rel, reconnect=5)
-        rel.signal(2, rel.abort)  # Keyboard Interrupt
-        rel.dispatch()
-    except Exception as e:
-        logger.error("Connection failed: %s", e)
+    while True:
+        try:
+            ws = websocket.WebSocketApp("wss://d2emu.com/ws",
+                                      on_message=on_message,
+                                      on_error=on_error,
+                                      on_close=on_close,
+                                      on_open=on_open,
+                                      header={"Authorization":"Basic {}".format(os.getenv('D2EMU_AUTH'))})
+            ws.run_forever(dispatcher=rel, reconnect=5)
+            rel.signal(2, rel.abort)  # Keyboard Interrupt
+            rel.dispatch()
+        except Exception as e:
+            logger.error("Connection failed: %s. Retrying in 5 seconds...", e)
+            time.sleep(5)
