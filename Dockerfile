@@ -12,5 +12,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # fix reconnect
 RUN sed -i "s/if op_code == ABNF.OPCODE_CLOSE:/if op_code == ABNF.OPCODE_CLOSE and not reconnect:/g" /usr/local/lib/python3.8/site-packages/websocket/_app.py
-# Run the script when the container launches
+RUN sed -i "s/SSLEOFError,/SSLEOFError, ConnectionResetError/g" /usr/local/lib/python3.8/site-packages/websocket/_app.py
 CMD ["python", "./tracker.py"]
