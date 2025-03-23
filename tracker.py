@@ -31,15 +31,6 @@ last_dclone = None
 cur_tz = None
 next_tz = None
 
-def on_error(ws, error):
-    logger.error("WebSocket error: %s", error)
-
-def on_close(ws, close_status_code, close_msg):
-    logger.warning("WebSocket connection closed. Status code: %s, Message: %s", close_status_code, close_msg)
-
-def on_open(ws):
-    logger.info("WebSocket connection established")
-
 def on_message(ws, message):
     logger.debug("Message received %s", message)
     data = json.loads(message)
@@ -148,17 +139,10 @@ def message_discord(webhook_url, content):
         logger.error("Error sending message to Discord: %s", e)
 
 if __name__ == "__main__":
-    while True:
-        try:
-            ws = websocket.WebSocketApp("wss://d2emu.com/ws",
-                                      on_message=on_message,
-                                      on_error=on_error,
-                                      on_close=on_close,
-                                      on_open=on_open,
-                                      header={"Authorization":"Basic {}".format(os.getenv('D2EMU_AUTH'))})
-            ws.run_forever(dispatcher=rel, reconnect=5)
-            rel.signal(2, rel.abort)  # Keyboard Interrupt
-            rel.dispatch()
-        except Exception as e:
-            logger.error("Connection failed: %s. Retrying in 5 seconds...", e)
-            time.sleep(5)
+    ws = websocket.WebSocketApp("wss://d2emu.com/ws",
+                              on_message=on_message,
+                              header={"Authorization":"Basic {}".format(os.getenv('D2EMU_AUTH'))})
+
+    ws.run_forever(dispatcher=rel, reconnect=5)  # Set dispatcher to automatic reconnection, 5 second reconnect delay if connection closed unexpectedly
+    rel.signal(2, rel.abort)  # Keyboard Interrupt
+    rel.dispatch()
